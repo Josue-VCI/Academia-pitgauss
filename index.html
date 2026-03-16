@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PitGauss | Academia Preuniversitaria Premium</title>
+    <meta name="description"
+        content="Asegura tu ingreso a UNI, San Marcos, PUCP y UPC con PitGauss. Metodología exclusiva, profesores expertos y simulacros tipo examen de admisión.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#0D47A1', // Dark Blue
+                            light: '#E3F2FD',
+                        },
+                        secondary: '#0F172A',
+                        accent: '#FFD54F', // Yellow
+                        muted: '#64748B',
+                        card: {
+                            DEFAULT: '#FFFFFF',
+                            hover: '#F1F5F9',
+                        },
+                        bordercolor: {
+                            DEFAULT: '#E2E8F0',
+                            highlight: '#CBD5E1',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Global Utility & Resets */
+        html,
+        body {
+            scroll-behavior: smooth;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 213, 79, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 213, 79, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 213, 79, 0); }
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes fadeInStep {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* JS Scroll Animations */
+        .reveal,
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active,
+        .fade-in.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Level Calculator Specifics */
+        .calc-option.selected {
+            border-color: #0D47A1 !important;
+            background-color: #E3F2FD !important;
+        }
+
+        /* Hide scrollbar for gallery elements */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="relative">
+    <div class="page-wrapper">
+
+        <div class="bg-gradient-to-r from-secondary to-slate-800 text-white py-2 md:py-3 text-center text-xs md:text-[0.95rem] flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-4 md:gap-6 relative z-[101] px-4">
+            <span>🔥 <strong>¡ÚLTIMOS DÍAS!</strong> Cierre de Matrículas 2026:</span>
+            <div class="flex gap-1.5 sm:gap-2 items-center">
+                <div class="bg-white/10 px-1.5 sm:px-2 py-1 rounded-md font-bold text-accent min-w-[32px] sm:min-w-[40px] text-center" id="cd-days">00</div>
+                <span>d</span>
+                <div class="bg-white/10 px-1.5 sm:px-2 py-1 rounded-md font-bold text-accent min-w-[32px] sm:min-w-[40px] text-center" id="cd-hours">00</div>
+                <span>h</span>
+                <div class="bg-white/10 px-1.5 sm:px-2 py-1 rounded-md font-bold text-accent min-w-[32px] sm:min-w-[40px] text-center" id="cd-mins">00</div>
+                <span>m</span>
+                <div class="bg-white/10 px-1.5 sm:px-2 py-1 rounded-md font-bold text-accent min-w-[32px] sm:min-w-[40px] text-center" id="cd-secs">00</div>
+                <span>s</span>
+            </div>
+        </div>
+
+        <nav class="sticky top-0 left-0 w-full z-[100] py-4 transition-all duration-400 bg-transparent flex justify-center" id="navbar">
+            <div class="w-full max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
+                <a href="#" class="flex items-center gap-2">
+                    <img src="./PitGaussLogo_sinFondo.png" alt="PitGauss Logo" class="h-16 md:h-20 lg:h-24 w-auto object-contain hover:scale-105 transition-transform duration-300">
+                </a>
+
+                <div class="nav-menu hidden md:flex flex-col md:flex-row items-center gap-10 absolute md:static top-full left-0 w-full md:w-auto bg-white md:bg-transparent p-8 md:p-0 shadow-[0_20px_40px_rgba(0,0,0,0.15)] md:shadow-none border-b md:border-none border-slate-200 z-50 transition-all duration-300" id="nav-menu">
+                    <div class="flex flex-col md:flex-row gap-6 md:gap-10 w-full md:w-auto text-center md:text-left">
+                        <a href="#inicio" class="text-base font-medium text-muted hover:text-primary transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-[2px] after:bg-primary after:transition-all">Inicio</a>
+                        <a href="#metodologia" class="text-base font-medium text-muted hover:text-primary transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-[2px] after:bg-primary after:transition-all">Metodología</a>
+                        <a href="#universidades" class="text-base font-medium text-muted hover:text-primary transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-[2px] after:bg-primary after:transition-all">Universidades</a>
+                        <a href="#ciclos" class="text-base font-medium text-muted hover:text-primary transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-[2px] after:bg-primary after:transition-all">Ciclos</a>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto mt-6 md:mt-0">
+                        <a href="#contacto" class="bg-transparent text-primary border-2 border-primary px-6 py-2.5 rounded-xl font-semibold hover:bg-primary-light transition-transform hover:-translate-y-0.5 text-center">Consulta</a>
+                        <a href="#" data-target="modal-matricula" class="bg-primary text-white border-2 border-primary px-6 py-2.5 rounded-xl font-semibold shadow-[0_4px_14px_rgba(13,71,161,0.3)] hover:bg-blue-800 hover:shadow-[0_6px_20px_rgba(13,71,161,0.4)] transition-transform hover:-translate-y-0.5 text-center">Matricúlate</a>
+                    </div>
+                </div>
+
+                <button class="md:hidden text-secondary text-3xl bg-transparent border-none cursor-pointer hover:text-primary transition-colors" id="mobile-menu-btn" aria-label="Abrir menú">
+                    <i class="ph ph-list"></i>
+                </button>
+            </div>
+        </nav>
+
+        <div class="w-full relative overflow-hidden">
+            <main>
+                <section id="inicio" class="min-h-[calc(90vh-80px)] flex items-center pt-8 py-12 md:py-20 relative">
+                    <div class="w-full max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
+                        <div class="hero-content reveal">
+                            <div class="inline-block px-5 py-1.5 bg-accent text-secondary rounded-full text-sm font-bold mb-6 shadow-[0_4px_15px_rgba(255,213,79,0.3)]">Nuevos ciclos 2026</div>
+                            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight mb-4 md:mb-6 text-secondary leading-tight font-bold">
+                                Asegura tu ingreso a la<br>
+                                <span class="bg-clip-text text-transparent bg-gradient-to-br from-primary to-blue-700">Universidad de tus Sueños</span>
+                            </h1>
+                            <p class="text-base md:text-xl text-muted mb-8 md:mb-10 max-w-full md:max-w-[90%] leading-relaxed">
+                                La academia preuniversitaria líder en preparación de alto rendimiento para UNI, San Marcos, PUCP, UPC, etc. Dominamos las ciencias y letras con la <strong>Metodología Gaussiana</strong>.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 md:mb-14">
+                                <a href="#" data-target="modal-matricula" class="bg-primary text-white border-2 border-primary px-6 sm:px-9 py-3 sm:py-4 rounded-xl font-semibold shadow-[0_4px_14px_rgba(13,71,161,0.3)] hover:bg-blue-800 hover:shadow-[0_6px_20px_rgba(13,71,161,0.4)] transition-transform hover:-translate-y-0.5 text-center text-base sm:text-lg flex justify-center items-center gap-2">
+                                    Empieza hoy <i class="ph ph-arrow-right"></i>
+                                </a>
+                                <a href="#metodologia" class="bg-transparent text-primary border-2 border-primary px-6 sm:px-9 py-3 sm:py-4 rounded-xl font-semibold hover:bg-primary-light transition-transform hover:-translate-y-0.5 text-center text-base sm:text-lg">
+                                    Descubre cómo
+                                </a>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-10 justify-center sm:justify-start">
+                                <div class="flex flex-col items-center sm:items-start">
+                                    <h3 class="text-2xl sm:text-3xl md:text-4xl text-secondary font-extrabold">95%</h3>
+                                    <p class="text-xs sm:text-sm md:text-[0.95rem] text-muted font-medium">Tasa de Ingreso</p>
+                                </div>
+                                <div class="w-0.5 h-8 sm:h-10 bg-bordercolor hidden sm:block"></div>
+                                <div class="flex flex-col items-center sm:items-start">
+                                    <h3 class="text-2xl sm:text-3xl md:text-4xl text-secondary font-extrabold">+5k</h3>
+                                    <p class="text-xs sm:text-sm md:text-[0.95rem] text-muted font-medium">Alumnos Ingresantes</p>
+                                </div>
+                                <div class="w-0.5 h-8 sm:h-10 bg-bordercolor hidden sm:block"></div>
+                                <div class="flex flex-col items-center sm:items-start">
+                                    <h3 class="text-2xl sm:text-3xl md:text-4xl text-secondary font-extrabold">Top 1</h3>
+                                    <p class="text-xs sm:text-sm md:text-[0.95rem] text-muted font-medium">En Exámenes Ciencias</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative h-auto lg:h-[500px] flex items-center justify-center reveal delay-1 w-full mx-auto max-w-[320px] sm:max-w-[380px] lg:max-w-full">
+                            <div class="w-full max-w-[380px] h-[480px] flex flex-col items-center justify-center relative z-10 bg-white rounded-[30px] border border-bordercolor overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.1)] before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[120px] before:bg-gradient-to-br before:from-primary before:to-blue-700 before:z-0">
+                                <div class="text-center z-10 flex flex-col items-center w-full p-8 mt-2">
+                                    <div class="w-[100px] h-[100px] bg-white rounded-full flex items-center justify-center shadow-[0_10px_25px_rgba(0,0,0,0.1)] mb-6 mt-8">
+                                        <i class="ph-fill ph-student text-5xl text-primary"></i>
+                                    </div>
+                                    <div class="text-center">
+                                        <h3 class="text-2xl font-bold mb-2 text-secondary">Sergio Gómez</h3>
+                                        <p class="text-muted text-base">Ingresante Ing. Sistemas UPC</p>
+                                    </div>
+                                    <div class="mt-6 bg-primary-light text-primary px-4 py-2 rounded-lg font-semibold text-sm inline-flex items-center gap-2">
+                                        <i class="ph-fill ph-star"></i> Puesto 1 General
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="absolute w-[50px] h-[50px] sm:w-[70px] sm:h-[70px] bg-white border border-bordercolor rounded-2xl flex items-center justify-center text-2xl sm:text-3xl z-20 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] top-[15%] left-0 sm:-left-[5%] animate-[float_6s_ease-in-out_infinite]">
+                                <i class="ph-fill ph-calculator text-primary"></i>
+                            </div>
+                            <div class="absolute w-[50px] h-[50px] sm:w-[70px] sm:h-[70px] bg-white border border-bordercolor rounded-2xl flex items-center justify-center text-2xl sm:text-3xl z-20 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] bottom-[15%] right-0 sm:-right-[5%] animate-[float_6s_ease-in-out_infinite]" style="animation-delay: -2s;">
+                                <i class="ph-fill ph-book-open text-accent"></i>
+                            </div>
+                            <div class="hidden sm:flex absolute w-[50px] h-[50px] sm:w-[70px] sm:h-[70px] bg-white border border-bordercolor rounded-2xl items-center justify-center text-2xl sm:text-3xl z-20 shadow-[0_0_0_4px_#E3F2FD] top-[40%] right-0 sm:-right-[10%] lg:-right-[15%] animate-[float_6s_ease-in-out_infinite]" style="animation-delay: -4s;">
+                                <i class="ph-fill ph-graduation-cap text-[#10B981]"></i>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="universidades" class="fade-in py-8 md:py-12 bg-white border-y border-bordercolor">
+                    <div class="w-full max-w-7xl mx-auto px-4 md:px-8">
+                        <p class="text-center text-muted font-medium text-lg">Nuestros alumnos lideran los exámenes de admisión en:</p>
+                        <div class="w-full overflow-hidden relative py-4 mt-8 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+                            <div class="flex items-center gap-12 w-max animate-[marquee_25s_linear_infinite] hover:[animation-play-state:paused]">
+                                <div class="text-2xl font-extrabold text-muted px-8 py-4 tracking-wide transition-all duration-400 opacity-60 hover:opacity-100 hover:text-primary hover:scale-105 bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:border-accent"><span>UNI</span></div>
+                                <div class="text-2xl font-extrabold text-muted px-8 py-4 tracking-wide transition-all duration-400 opacity-60 hover:opacity-100 hover:text-primary hover:scale-105 bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:border-accent"><span>SAN MARCOS</span></div>
+                                <div class="text-2xl font-extrabold text-muted px-8 py-4 tracking-wide transition-all duration-400 opacity-60 hover:opacity-100 hover:text-primary hover:scale-105 bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:border-accent"><span>PUCP</span></div>
+                                <div class="text-2xl font-extrabold text-muted px-8 py-4 tracking-wide transition-all duration-400 opacity-60 hover:opacity-100 hover:text-primary hover:scale-105 bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:border-accent"><span>UPC</span></div>
+                                <div class="text-2xl font-extrabold text-muted px-8 py-4 tracking-wide transition-all duration-400 opacity-60 hover:opacity-100 hover:text-primary hover:scale-105 bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:border-accent"><span>UNAC</span></div>
+                                <div class="text-2xl font-extrabold text-muted px-8 py-4 tracking-wide transition-all duration-400 opacity-60 hover:opacity-100 hover:text-primary hover:scale-105 bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:border-accent"><span>AGRARIA</span></div>
+                                <div class="text-2xl font-extrabold text-muted px-8 py-4 tracking-wide transition-all duration-400 opacity-60 hover:opacity-100 hover:text-primary hover:scale-105 bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:border-accent" aria-hidden="true"><span>UNI</span></div>
+                                <div class="text-2xl font-extrabold text-muted px-8 py-4 tracking-wide transition-all duration-400 opacity-60 hover:opacity-100 hover:text-primary hover:scale-105 bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:border-accent" aria-hidden="true"><span>SAN MARCOS</span></div>
+                                <div class="text-2xl font-extrabold text-muted px-8 py-4 tracking-wide transition-all duration-400 opacity-60 hover:opacity-100 hover:text-primary hover:scale-105 bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:border-accent" aria-hidden="true"><span>PUCP</span></div>
+                                <div class="text-2xl font-extrabold text-muted px-8 py-4 tracking-wide transition-all duration-400 opacity-60 hover:opacity-100 hover:text-primary hover:scale-105 bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:border-accent" aria-hidden="true"><span>UPC</span></div>
+                                <div class="text-2xl font-extrabold text-muted px-8 py-4 tracking-wide transition-all duration-400 opacity-60 hover:opacity-100 hover:text-primary hover:scale-105 bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:border-accent" aria-hidden="true"><span>UNAC</span></div>
+                                <div class="text-2xl font-extrabold text-muted px-8 py-4 tracking-wide transition-all duration-400 opacity-60 hover:opacity-100 hover:text-primary hover:scale-105 bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:border-accent" aria-hidden="true"><span>AGRARIA</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="metodologia" class="py-14 md:py-20 bg-bg-light">
+                    <div class="w-full max-w-7xl mx-auto px-4 md:px-8">
+                        <div class="text-center mb-16 max-w-3xl mx-auto reveal">
+                            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-secondary leading-tight">El Algoritmo de tu <span class="text-primary">Éxito</span></h2>
+                            <p class="text-muted text-base md:text-xl leading-relaxed">Nuestra Metodología Gaussiana está diseñada matemáticamente para optimizar tu aprendizaje y retención al máximo nivel.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
+                            <div class="bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 hover:border-accent p-6 md:p-10 text-left reveal">
+                                <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-8 bg-primary-light text-primary">
+                                    <i class="ph ph-target"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-4 text-secondary">Ciclos Especializados</h3>
+                                <p class="text-muted leading-relaxed">Cada universidad tiene un examen distinto. Te preparamos específicamente para el perfil del examen que enfrentarás, no enseñamos "por si acaso".</p>
+                            </div>
+                            <div class="bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 hover:border-accent p-6 md:p-10 text-left reveal delay-1">
+                                <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-8 bg-purple-100 text-purple-600">
+                                    <i class="ph ph-brain"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-4 text-secondary">Plana Docente Top</h3>
+                                <p class="text-muted leading-relaxed">Ingenieros, médicos y profesionales egresados de los primeros puestos que conocen los "hacks" y trucos de cada tipo de pregunta.</p>
+                            </div>
+                            <div class="bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 hover:border-accent p-6 md:p-10 text-left reveal delay-2">
+                                <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-8 bg-cyan-100 text-cyan-600">
+                                    <i class="ph ph-chart-line-up"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-4 text-secondary">Simulacros Tipo Admisión</h3>
+                                <p class="text-muted leading-relaxed">Evaluaciones semanales estrictas bajo las mismas condiciones del examen real. Analíticas de rendimiento para atacar tus puntos débiles.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="py-14 md:py-24 bg-white fade-in px-4 md:px-8 relative overflow-hidden">
+                    <div class="absolute top-[10%] left-[-5%] w-72 h-72 bg-primary/5 rounded-full blur-[80px] z-0"></div>
+                    <div class="absolute bottom-[10%] right-[-5%] w-80 h-80 bg-accent/10 rounded-full blur-[100px] z-0"></div>
+                    <div class="w-full max-w-7xl mx-auto relative z-10">
+                        <div class="text-center mb-20 max-w-3xl mx-auto reveal">
+                            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-secondary leading-tight">Inspirados por los <span class="text-primary">Grandes</span></h2>
+                            <p class="text-muted text-base md:text-xl leading-relaxed">Nuestra metodología de alto rendimiento nace del legado matemático y analítico de nuestras principales figuras: <strong>Pitágoras</strong> y <strong>Carl Friedrich Gauss</strong>.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 lg:gap-24 items-center">
+                            <div class="flex flex-col items-center text-center reveal">
+                                <div class="relative w-64 h-64 md:w-80 md:h-80 mb-8 rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white group">
+                                    <div class="absolute inset-0 bg-primary/20 mix-blend-multiply group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                                    <img src="./pythagoras.png" alt="Retrato de Pitágoras" loading="lazy" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                                </div>
+                                <h3 class="text-3xl font-bold text-secondary mb-3">Pitágoras</h3>
+                                <p class="text-muted text-lg leading-relaxed max-w-sm">"Todo es número". El padre de las matemáticas puras que nos enseñó a ver el universo a través de patrones lógicos y exactos.</p>
+                            </div>
+                            <div class="flex flex-col items-center text-center reveal delay-1">
+                                <div class="relative w-64 h-64 md:w-80 md:h-80 mb-8 rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white group">
+                                    <div class="absolute inset-0 bg-accent/20 mix-blend-multiply group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                                    <img src="./gauss.png" alt="Retrato de Carl Friedrich Gauss" loading="lazy" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                                </div>
+                                <h3 class="text-3xl font-bold text-secondary mb-3">Carl Friedrich Gauss</h3>
+                                <p class="text-muted text-lg leading-relaxed max-w-sm">El "Príncipe de las Matemáticas". Su capacidad de resolución de retos imposibles inspira nuestra visión analítica de preparación.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="py-20 bg-primary-light fade-in">
+                    <div class="w-full max-w-4xl mx-auto px-4 md:px-8 relative text-center">
+                        <div class="quote-slider">
+                            <div class="quote-slide active animate-[fadeInStep_0.4s_ease_forwards]">
+                                <i class="ph-fill ph-quotes text-5xl text-primary opacity-30 mb-6 mx-auto block"></i>
+                                <h3 class="text-2xl md:text-3xl font-medium text-secondary italic mb-6 leading-relaxed">"La matemática es la reina de las ciencias y la teoría de números es la reina de las matemáticas."</h3>
+                                <p class="text-primary font-bold text-lg">— Carl Friedrich Gauss</p>
+                            </div>
+                            <div class="quote-slide hidden animate-[fadeInStep_0.4s_ease_forwards]">
+                                <i class="ph-fill ph-quotes text-5xl text-primary opacity-30 mb-6 mx-auto block"></i>
+                                <h3 class="text-2xl md:text-3xl font-medium text-secondary italic mb-6 leading-relaxed">"El genio se hace con un 1% de talento, y un 99% de trabajo."</h3>
+                                <p class="text-primary font-bold text-lg">— Albert Einstein</p>
+                            </div>
+                            <div class="quote-slide hidden animate-[fadeInStep_0.4s_ease_forwards]">
+                                <i class="ph-fill ph-quotes text-5xl text-primary opacity-30 mb-6 mx-auto block"></i>
+                                <h3 class="text-2xl md:text-3xl font-medium text-secondary italic mb-6 leading-relaxed">"Si no puedes explicar algo de forma sencilla, es que no lo entiendes lo suficientemente bien."</h3>
+                                <p class="text-primary font-bold text-lg">— Richard Feynman</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="testimonios" class="py-14 md:py-24 bg-white fade-in px-4 md:px-8">
+                    <div class="w-full max-w-7xl mx-auto">
+                        <div class="text-center mb-16 max-w-3xl mx-auto reveal">
+                            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-secondary leading-tight">Nuestros <span class="text-primary">Cachimbos</span> Hablan</h2>
+                            <p class="text-muted text-base md:text-xl leading-relaxed">Descubre por qué cientos de alumnos confían su preparación en PitGauss año tras año.</p>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+                            <div class="bg-white border border-bordercolor rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 relative reveal flex flex-col justify-between">
+                                <i class="ph-fill ph-quotes text-6xl text-bordercolor absolute top-6 right-6 opacity-30"></i>
+                                <p class="text-secondary italic leading-relaxed mb-8 relative z-10 text-lg">"La exigencia de los simulacros semanales me preparó física y mentalmente. Cuando di el examen real de la UNI, me pareció un simulacro más."</p>
+                                <div class="flex items-center gap-4 mt-auto">
+                                    <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary shrink-0 shadow-md">
+                                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" loading="lazy" alt="Cachimbo UNI" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-secondary text-lg">Andrea Gómez</h4>
+                                        <p class="text-sm font-medium text-muted">Ing. Civil - <span class="text-primary">1° Puesto UNI</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white border border-bordercolor rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 relative reveal delay-1 flex flex-col justify-between">
+                                <i class="ph-fill ph-quotes text-6xl text-bordercolor absolute top-6 right-6 opacity-30"></i>
+                                <p class="text-secondary italic leading-relaxed mb-8 relative z-10 text-lg">"Venía de otra academia donde me sentía un número más. En PitGauss la tutoría me ayudó a superar mis miedos en las matemáticas."</p>
+                                <div class="flex items-center gap-4 mt-auto">
+                                    <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary shrink-0 shadow-md">
+                                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" loading="lazy" alt="Cachimbo UNMSM" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-secondary text-lg">Carlos Ruiz</h4>
+                                        <p class="text-sm font-medium text-muted">Medicina - <span class="text-primary">UNMSM</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white border border-bordercolor rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 relative reveal delay-2 flex flex-col justify-between">
+                                <i class="ph-fill ph-quotes text-6xl text-bordercolor absolute top-6 right-6 opacity-30"></i>
+                                <p class="text-secondary italic leading-relaxed mb-8 relative z-10 text-lg">"Las entrevistas y psicotécnico del Ciclo UPC fueron clave. Ingresé con beca gracias al nivel de preparación holística que recibí."</p>
+                                <div class="flex items-center gap-4 mt-auto">
+                                    <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary shrink-0 shadow-md">
+                                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" loading="lazy" alt="Cachimbo UPC" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-secondary text-lg">Sofía Méndez</h4>
+                                        <p class="text-sm font-medium text-muted">Ing. de Software - <span class="text-primary">UPC</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="ciclos" class="py-14 md:py-20 bg-white">
+                    <div class="w-full max-w-7xl mx-auto px-4 md:px-8">
+                        <div class="text-center mb-10 md:mb-16 max-w-3xl mx-auto reveal">
+                            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-secondary leading-tight">Programas <span class="text-primary">Destacados</span></h2>
+                            <p class="text-muted text-base md:text-xl leading-relaxed">Elige el ciclo que se adapte a tu meta y nivel actual. Tenemos opciones presenciales y virtuales.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                            <div class="bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 hover:border-accent p-6 md:p-10 flex flex-col relative overflow-visible reveal">
+                                <div class="absolute -top-4 right-8 text-xs font-bold px-4 py-1.5 rounded-full bg-primary-light text-primary shadow-sm">Más Popular</div>
+                                <h3 class="text-3xl mt-2 mb-4 text-secondary font-bold">Ciclo Ciencias (UNI)</h3>
+                                <p class="text-muted mb-8 flex-grow leading-relaxed">Preparación intensiva en Matemáticas, Física y Química de nivel uni. Exigencia brutal, ingreso seguro.</p>
+                                <ul class="mb-10 bg-bg-light p-6 rounded-xl">
+                                    <li class="flex items-start gap-3 mb-4 text-secondary font-medium last:mb-0"><i class="ph ph-check-circle text-primary mt-1 text-xl flex-shrink-0"></i> Nivel preuniversitario avanzado</li>
+                                    <li class="flex items-start gap-3 mb-4 text-secondary font-medium last:mb-0"><i class="ph ph-check-circle text-primary mt-1 text-xl flex-shrink-0"></i> Seminarios de problemas tipo examen</li>
+                                    <li class="flex items-start gap-3 mb-4 text-secondary font-medium last:mb-0"><i class="ph ph-check-circle text-primary mt-1 text-xl flex-shrink-0"></i> Tutoría personalizada 24/7</li>
+                                </ul>
+                                <div>
+                                    <a href="#" data-target="modal-matricula" class="bg-transparent text-primary border-2 border-primary px-6 py-2.5 rounded-xl font-semibold hover:bg-primary-light transition-transform hover:-translate-y-0.5 text-center block w-full">Ver Detalles</a>
+                                </div>
+                            </div>
+
+                            <div class="bg-white border-2 border-primary rounded-2xl shadow-[0_20px_25px_-5px_rgba(13,71,161,0.1)] hover:shadow-2xl hover:-translate-y-2 lg:scale-105 transition duration-300 p-6 md:p-10 flex flex-col relative overflow-visible z-10 reveal delay-1 min-h-[500px]">
+                                <div class="absolute inset-0 bg-primary/5 rounded-2xl pointer-events-none"></div>
+                                <div class="absolute -top-4 right-8 text-xs font-bold px-4 py-1.5 rounded-full bg-accent text-secondary shadow-[0_4px_10px_rgba(255,213,79,0.4)]">Alto Rendimiento</div>
+                                <h3 class="text-3xl mt-2 mb-4 text-secondary font-bold">Ciclo Letras y Medicina (UNMSM)</h3>
+                                <p class="text-muted mb-8 flex-grow leading-relaxed">Equilibrio perfecto entre ciencias exactas, ciencias de la salud y humanidades. La fórmula decana.</p>
+                                <ul class="mb-10 bg-bg-light p-6 rounded-xl relative z-10">
+                                    <li class="flex items-start gap-3 mb-4 text-secondary font-medium last:mb-0"><i class="ph ph-check-circle text-primary mt-1 text-xl flex-shrink-0"></i> Simulacros del formato DECO®</li>
+                                    <li class="flex items-start gap-3 mb-4 text-secondary font-medium last:mb-0"><i class="ph ph-check-circle text-primary mt-1 text-xl flex-shrink-0"></i> Laboratorio virtual de ciencias</li>
+                                    <li class="flex items-start gap-3 mb-4 text-secondary font-medium last:mb-0"><i class="ph ph-check-circle text-primary mt-1 text-xl flex-shrink-0"></i> Actualización constante de temario</li>
+                                </ul>
+                                <div class="relative z-10">
+                                    <a href="#" data-target="modal-matricula" class="bg-primary text-white border-2 border-primary px-6 py-2.5 rounded-xl font-semibold shadow-[0_4px_14px_rgba(13,71,161,0.3)] hover:bg-blue-800 transition-transform hover:-translate-y-0.5 text-center block w-full">Matricúlate Ya</a>
+                                </div>
+                            </div>
+
+                            <div class="bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 hover:border-accent p-6 md:p-10 flex flex-col relative overflow-visible reveal delay-2">
+                                <h3 class="text-3xl mt-2 mb-4 text-secondary font-bold">Ciclo PUCP / UPC</h3>
+                                <p class="text-muted mb-8 flex-grow leading-relaxed">Entrenamiento focalizado en Razonamiento Matemático, Verbal y Redacción para superar exámenes de aptitud.</p>
+                                <ul class="mb-10 bg-bg-light p-6 rounded-xl">
+                                    <li class="flex items-start gap-3 mb-4 text-secondary font-medium last:mb-0"><i class="ph ph-check-circle text-primary mt-1 text-xl flex-shrink-0"></i> Entrevistas personales guiadas</li>
+                                    <li class="flex items-start gap-3 mb-4 text-secondary font-medium last:mb-0"><i class="ph ph-check-circle text-primary mt-1 text-xl flex-shrink-0"></i> Pruebas psicotécnicas</li>
+                                    <li class="flex items-start gap-3 mb-4 text-secondary font-medium last:mb-0"><i class="ph ph-check-circle text-primary mt-1 text-xl flex-shrink-0"></i> Enfoque en rapidez y precisión</li>
+                                </ul>
+                                <div>
+                                    <a href="#" data-target="modal-matricula" class="bg-transparent text-primary border-2 border-primary px-6 py-2.5 rounded-xl font-semibold hover:bg-primary-light transition-transform hover:-translate-y-0.5 text-center block w-full">Ver Detalles</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-[20px] p-6 md:p-10 max-w-2xl mx-auto mt-12 text-center border border-bordercolor reveal" id="test-nivel">
+                            <div class="mb-8">
+                                <h2 class="text-3xl font-bold mb-2 text-secondary">Descubre tu Ciclo Ideal</h2>
+                                <p class="text-muted">Responde 3 preguntas rápidas para orientarte mejor.</p>
+                            </div>
+
+                            <div class="mb-8 text-left">
+                                <span class="text-sm font-semibold text-muted block mb-2" id="step-count">Paso 1 de 3</span>
+                                <div class="w-full h-2 bg-bg-light rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary rounded-full transition-all duration-400" id="calc-progress-fill" style="width: 33%"></div>
+                                </div>
+                            </div>
+
+                            <div class="calc-step active animate-[fadeInStep_0.4s_ease_forwards]" data-step="1">
+                                <h4 class="mb-4 text-xl font-bold text-secondary">¿Cuál es tu área principal de interés?</h4>
+                                <div class="flex flex-col gap-4 my-6">
+                                    <div class="p-4 border-2 border-bordercolor rounded-xl cursor-pointer transition duration-200 font-medium text-secondary hover:border-primary-light hover:bg-bg-light calc-option" data-val="uni">Ingeniería o ciencias exactas puras.</div>
+                                    <div class="p-4 border-2 border-bordercolor rounded-xl cursor-pointer transition duration-200 font-medium text-secondary hover:border-primary-light hover:bg-bg-light calc-option" data-val="unmsm">Ciencias de la salud, biología o letras.</div>
+                                    <div class="p-4 border-2 border-bordercolor rounded-xl cursor-pointer transition duration-200 font-medium text-secondary hover:border-primary-light hover:bg-bg-light calc-option" data-val="pucp">Negocios, arte o aptitud académica general.</div>
+                                </div>
+                            </div>
+
+                            <div class="calc-step" data-step="2" style="display: none;">
+                                <h4 class="mb-4 text-xl font-bold text-secondary">¿Cómo consideras tu nivel actual?</h4>
+                                <div class="flex flex-col gap-4 my-6">
+                                    <div class="p-4 border-2 border-bordercolor rounded-xl cursor-pointer transition duration-200 font-medium text-secondary hover:border-primary-light hover:bg-bg-light calc-option" data-val="basico">Básico (Empiezo casi desde cero)</div>
+                                    <div class="p-4 border-2 border-bordercolor rounded-xl cursor-pointer transition duration-200 font-medium text-secondary hover:border-primary-light hover:bg-bg-light calc-option" data-val="intermedio">Intermedio (Ya tengo base del colegio)</div>
+                                    <div class="p-4 border-2 border-bordercolor rounded-xl cursor-pointer transition duration-200 font-medium text-secondary hover:border-primary-light hover:bg-bg-light calc-option" data-val="avanzado">Avanzado (He estado en academias antes)</div>
+                                </div>
+                            </div>
+
+                            <div class="calc-step" data-step="3" style="display: none;">
+                                <h4 class="mb-4 text-xl font-bold text-secondary">¿Prefieres modalidad presencial o virtual?</h4>
+                                <div class="flex flex-col gap-4 my-6">
+                                    <div class="p-4 border-2 border-bordercolor rounded-xl cursor-pointer transition duration-200 font-medium text-secondary hover:border-primary-light hover:bg-bg-light calc-option" data-val="presencial">100% Presencial (Campus Lima)</div>
+                                    <div class="p-4 border-2 border-bordercolor rounded-xl cursor-pointer transition duration-200 font-medium text-secondary hover:border-primary-light hover:bg-bg-light calc-option" data-val="virtual">100% Virtual (Clases en Vivo)</div>
+                                </div>
+                            </div>
+
+                            <div id="calc-result" class="mt-8 p-6 bg-[#D1FAE5] border border-[#34D399] rounded-xl hidden text-[#065F46] animate-[fadeIn_0.5s_ease]">
+                                <div class="text-[3rem] text-[#10B981] mb-4">
+                                    <i class="ph-fill ph-check-circle"></i>
+                                </div>
+                                <h4 class="text-xl font-bold mb-2">Sugerencia PitGauss:</h4>
+                                <p id="calc-result-msg" class="text-[1.1rem] font-medium mb-6"></p>
+                                <a href="#" data-target="modal-matricula" class="bg-primary text-white border-2 border-primary px-6 py-2.5 rounded-xl font-semibold shadow-[0_4px_14px_rgba(13,71,161,0.3)] hover:bg-blue-800 transition-transform hover:-translate-y-0.5 inline-block">Ver Información del Ciclo</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="docentes" class="fade-in py-14 md:py-20 bg-bg-light">
+                    <div class="w-full max-w-7xl mx-auto px-4 md:px-8">
+                        <div class="text-center mb-16 max-w-3xl mx-auto reveal">
+                            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-secondary leading-tight">Nuestra <span class="text-primary">Plana Docente</span> Top</h2>
+                            <p class="text-muted text-base md:text-xl leading-relaxed">Descubre a los expertos que te guiarán paso a paso hacia tu ingreso.</p>
+                        </div>
+
+                        <div class="relative w-full overflow-hidden px-8 sm:px-14 py-4 reveal">
+                            <button aria-label="Anterior" class="absolute top-1/2 -translate-y-1/2 left-0 w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-white text-secondary shadow-[0_4px_15px_rgba(0,0,0,0.1)] flex items-center justify-center text-base sm:text-xl cursor-pointer z-10 hover:bg-primary hover:text-white transition-colors border border-bordercolor" id="teacher-prev"><i class="ph ph-caret-left"></i></button>
+                            <div class="flex gap-8 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-4 scroll-smooth" id="teachers-grid">
+                                <div class="group min-w-[280px] md:min-w-[320px] max-w-[320px] flex-shrink-0 snap-center bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 hover:border-accent overflow-hidden flex flex-col mx-auto cursor-pointer">
+                                    <div class="w-full aspect-[4/5] relative overflow-hidden bg-slate-100">
+                                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=500&fit=crop" loading="lazy" alt="Profesor Álgebra" class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110">
+                                    </div>
+                                    <div class="p-6 text-center bg-white relative z-10 flex-grow flex flex-col justify-center">
+                                        <h4 class="text-xl font-bold mb-1 text-secondary">Carlos Sánchez</h4>
+                                        <p class="text-primary font-medium text-sm">Álgebra & Funciones</p>
+                                    </div>
+                                </div>
+                                <div class="group min-w-[280px] md:min-w-[320px] max-w-[320px] flex-shrink-0 snap-center bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 hover:border-accent overflow-hidden flex flex-col mx-auto cursor-pointer">
+                                    <div class="w-full aspect-[4/5] relative overflow-hidden bg-slate-100">
+                                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop" loading="lazy" alt="Profesora Física" class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110">
+                                    </div>
+                                    <div class="p-6 text-center bg-white relative z-10 flex-grow flex flex-col justify-center">
+                                        <h4 class="text-xl font-bold mb-1 text-secondary">Ana Rivera</h4>
+                                        <p class="text-primary font-medium text-sm">Física General</p>
+                                    </div>
+                                </div>
+                                <div class="group min-w-[280px] md:min-w-[320px] max-w-[320px] flex-shrink-0 snap-center bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 hover:border-accent overflow-hidden flex flex-col mx-auto cursor-pointer">
+                                    <div class="w-full aspect-[4/5] relative overflow-hidden bg-slate-100">
+                                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop" loading="lazy" alt="Profesor Geometría" class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110">
+                                    </div>
+                                    <div class="p-6 text-center bg-white relative z-10 flex-grow flex flex-col justify-center">
+                                        <h4 class="text-xl font-bold mb-1 text-secondary">Luis Mendoza</h4>
+                                        <p class="text-primary font-medium text-sm">Geometría Preuniversitaria</p>
+                                    </div>
+                                </div>
+                                <div class="group min-w-[280px] md:min-w-[320px] max-w-[320px] flex-shrink-0 snap-center bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 hover:border-accent overflow-hidden flex flex-col mx-auto cursor-pointer">
+                                    <div class="w-full aspect-[4/5] relative overflow-hidden bg-slate-100">
+                                        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=500&fit=crop" loading="lazy" alt="Profesora RV" class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110">
+                                    </div>
+                                    <div class="p-6 text-center bg-white relative z-10 flex-grow flex flex-col justify-center">
+                                        <h4 class="text-xl font-bold mb-1 text-secondary">Sofía López</h4>
+                                        <p class="text-primary font-medium text-sm">Razonamiento Verbal</p>
+                                    </div>
+                                </div>
+                                <div class="group min-w-[280px] md:min-w-[320px] max-w-[320px] flex-shrink-0 snap-center bg-white border border-bordercolor rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 hover:border-accent overflow-hidden flex flex-col mx-auto cursor-pointer">
+                                    <div class="w-full aspect-[4/5] relative overflow-hidden bg-slate-100">
+                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop" loading="lazy" alt="Profesor Historia" class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110">
+                                    </div>
+                                    <div class="p-6 text-center bg-white relative z-10 flex-grow flex flex-col justify-center">
+                                        <h4 class="text-xl font-bold mb-1 text-secondary">Roberto Díaz</h4>
+                                        <p class="text-primary font-medium text-sm">Historia del Perú y Universal</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button aria-label="Siguiente" class="absolute top-1/2 -translate-y-1/2 right-0 w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-white text-secondary shadow-[0_4px_15px_rgba(0,0,0,0.1)] flex items-center justify-center text-base sm:text-xl cursor-pointer z-10 hover:bg-primary hover:text-white transition-colors border border-bordercolor" id="teacher-next"><i class="ph ph-caret-right"></i></button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="py-14 md:py-20 bg-white fade-in px-4 md:px-8">
+                    <div class="w-full max-w-7xl mx-auto">
+                        <div class="bg-primary rounded-3xl p-6 sm:p-10 md:p-14 text-white flex flex-col md:flex-row items-center gap-6 sm:gap-10 md:gap-16 shadow-[0_25px_50px_-12px_rgba(13,71,161,0.5)] relative overflow-hidden z-10 mx-auto max-w-5xl reveal">
+                            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+                            <div class="w-20 md:w-32 h-20 md:h-32 rounded-full bg-white/10 flex items-center justify-center text-4xl md:text-5xl text-accent flex-shrink-0 backdrop-blur-sm relative z-10">
+                                <i class="ph-fill ph-file-pdf"></i>
+                            </div>
+                            <div class="flex-1 relative z-10 text-center md:text-left">
+                                <h3 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-tight">Descarga Gratis: Exámenes Resueltos UNI 2025</h3>
+                                <p class="text-primary-light text-base md:text-lg mb-6 md:mb-8 max-w-2xl mx-auto md:mx-0">
+                                    Obtén nuestro solucionario exclusivo con trucos matemáticos y métodos rápidos para asegurar tu puntaje.
+                                </p>
+                                <form class="lead-form flex flex-col sm:flex-row gap-4 w-full max-w-xl mx-auto md:mx-0">
+                                    <input type="email" class="flex-1 px-6 py-4 rounded-xl border-none outline-none text-secondary text-base placeholder-muted focus:ring-4 focus:ring-accent/50 transition-all shadow-inner" placeholder="Tu correo electrónico" required>
+                                    <button type="submit" class="bg-accent text-secondary px-8 py-4 text-lg font-bold rounded-xl shadow-[0_4px_15px_rgba(255,213,79,0.3)] hover:-translate-y-1 hover:shadow-[0_8px_25px_rgba(255,213,79,0.5)] transition-all">Descargar Ahora</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="sede" class="fade-in py-14 md:py-20 bg-bg-light">
+                    <div class="w-full max-w-7xl mx-auto px-4 md:px-8">
+                        <div class="text-center mb-16 max-w-3xl mx-auto reveal">
+                            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-secondary leading-tight">Conoce Nuestra <span class="text-primary">Sede</span></h2>
+                            <p class="text-muted text-base md:text-xl leading-relaxed">Instalaciones modernas diseñadas para un estudio intensivo sin distracciones.</p>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 bg-white border border-bordercolor rounded-3xl overflow-hidden shadow-xl reveal">
+                            <div class="w-full h-full min-h-[400px]">
+                                <iframe src="https://maps.google.com/maps?q=Av.%20Gerardo%20Unger%206049,%20Comas&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" class="min-h-[400px] border-none" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                            <div class="p-10 lg:p-14 flex flex-col justify-center bg-white">
+                                <h3 class="text-3xl font-bold mb-8 text-secondary">Sede Comas</h3>
+                                <ul class="flex flex-col gap-6">
+                                    <li class="flex gap-5 items-start">
+                                        <i class="ph-fill ph-map-pin text-primary text-2xl mt-1"></i>
+                                        <div>
+                                            <strong class="block mb-1 text-secondary text-lg">Dirección:</strong>
+                                            <p class="text-muted leading-relaxed">Av. Gerardo Unger 6049, Urb. Carabayllo, Comas - Lima</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex gap-5 items-start">
+                                        <i class="ph-fill ph-clock text-primary text-2xl mt-1"></i>
+                                        <div>
+                                            <strong class="block mb-1 text-secondary text-lg">Horario de Atención:</strong>
+                                            <p class="text-muted leading-relaxed">Lun - Sab: 8:00 AM - 8:00 PM</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex gap-5 items-start">
+                                        <i class="ph-fill ph-train text-primary text-2xl mt-1"></i>
+                                        <div>
+                                            <strong class="block mb-1 text-secondary text-lg">Referencia:</strong>
+                                            <p class="text-muted leading-relaxed">Frente a la estación de transporte y paradero Huaralino.</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <a href="https://maps.google.com/maps?q=Av.%20Gerardo%20Unger%206049,%20Comas" target="_blank" class="bg-primary text-white border border-primary px-6 py-3 rounded-xl font-bold shadow-[0_4px_14px_rgba(13,71,161,0.3)] hover:bg-blue-800 transition-transform hover:-translate-y-0.5 text-center mt-8 block w-full">Visítanos Hoy</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="faq" class="fade-in py-14 md:py-20 bg-white">
+                    <div class="w-full max-w-7xl mx-auto px-4 md:px-8">
+                        <div class="text-center mb-16 max-w-3xl mx-auto reveal">
+                            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-secondary leading-tight">Preguntas <span class="text-primary">Frecuentes</span></h2>
+                            <p class="text-muted text-base md:text-xl leading-relaxed">Resuelve tus dudas antes de matricularte con nosotros.</p>
+                        </div>
+                        <div class="max-w-3xl mx-auto flex flex-col gap-4 reveal faq-container">
+                            <div class="faq-item bg-white border border-bordercolor rounded-2xl overflow-hidden shadow-sm transition-all duration-300 group">
+                                <div class="faq-header p-6 md:p-8 flex justify-between items-center cursor-pointer text-lg font-bold text-secondary group-hover:text-primary select-none transition-colors">
+                                    ¿Los ciclos son presenciales o virtuales? <i class="ph ph-caret-down text-primary text-xl transition-transform duration-300"></i>
+                                </div>
+                                <div class="faq-body h-0 overflow-hidden transition-all duration-300 bg-bg-light">
+                                    <div class="faq-content p-6 md:p-8 pt-6 text-muted leading-relaxed font-medium">
+                                        Contamos con ambas modalidades. Nuestros ciclos presenciales se dictan en Lima, y los virtuales se realizan en vivo a través de nuestra plataforma interactiva, garantizando la misma exigencia.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="faq-item bg-white border border-bordercolor rounded-2xl overflow-hidden shadow-sm transition-all duration-300 group">
+                                <div class="faq-header p-6 md:p-8 flex justify-between items-center cursor-pointer text-lg font-bold text-secondary group-hover:text-primary select-none transition-colors">
+                                    ¿Hay simulacros? ¿Tienen un costo extra? <i class="ph ph-caret-down text-primary text-xl transition-transform duration-300"></i>
+                                </div>
+                                <div class="faq-body h-0 overflow-hidden transition-all duration-300 bg-bg-light">
+                                    <div class="faq-content p-6 md:p-8 pt-6 text-muted leading-relaxed font-medium">
+                                        ¡Sí! Tenemos simulacros tipo admisión cada domingo. Estos están 100% incluidos en el costo mensual de tu ciclo, por lo que no deberás pagar ningún extra.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="faq-item bg-white border border-bordercolor rounded-2xl overflow-hidden shadow-sm transition-all duration-300 group">
+                                <div class="faq-header p-6 md:p-8 flex justify-between items-center cursor-pointer text-lg font-bold text-secondary group-hover:text-primary select-none transition-colors">
+                                    ¿Cuáles son los horarios y precios? <i class="ph ph-caret-down text-primary text-xl transition-transform duration-300"></i>
+                                </div>
+                                <div class="faq-body h-0 overflow-hidden transition-all duration-300 bg-bg-light">
+                                    <div class="faq-content p-6 md:p-8 pt-6 text-muted leading-relaxed font-medium">
+                                        Los horarios varían por ciclo, generalmente en turnos de mañana (8 AM - 2 PM) o tarde (3 PM - 9 PM). Los precios empiezan desde S/ 250 mensuales. Para más detalles, por favor contacta a un asesor en el botón de WhatsApp.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="py-24 bg-gradient-to-br from-bg-light to-white relative overflow-hidden">
+                    <div class="absolute inset-0 z-0 bg-primary opacity-[0.03]"></div>
+                    <div class="absolute top-0 right-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[80px] z-0"></div>
+                    <div class="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-accent/10 rounded-full blur-[100px] z-0"></div>
+
+                    <div class="w-full max-w-5xl mx-auto px-4 md:px-8 relative z-10">
+                        <div class="bg-white/80 backdrop-blur-xl border border-bordercolor shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] rounded-3xl p-8 sm:p-12 md:p-20 text-center relative overflow-hidden reveal">
+                            <div class="relative z-10">
+                                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 md:mb-6 text-secondary tracking-tight leading-tight">
+                                    ¿Listo para ver tu nombre en la lista de ingresantes?</h2>
+                                <p class="text-base md:text-xl text-muted mb-8 md:mb-10 max-w-2xl mx-auto leading-relaxed">
+                                    Únete a la familia PitGauss. Obtén un descuento especial por inscripción temprana en nuestros ciclos 2026.</p>
+                                <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
+                                    <a href="#" data-target="modal-matricula" class="bg-primary text-white px-8 sm:px-10 py-3.5 sm:py-4 text-base sm:text-lg font-bold rounded-xl shadow-[0_8px_20px_rgba(13,71,161,0.3)] hover:bg-blue-800 transition-transform hover:-translate-y-1">Inscríbete Ahora</a>
+                                    <a href="#contacto" class="bg-transparent border-2 border-primary text-primary px-8 sm:px-10 py-3.5 sm:py-4 text-base sm:text-lg font-bold rounded-xl shadow-sm hover:bg-primary-light transition-transform hover:-translate-y-1">Contactar Asesor</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <footer id="contacto" class="bg-[#0B1121] text-slate-400 pt-20 pb-0 border-t border-slate-800 font-sans">
+                <div class="max-w-7xl mx-auto px-4 md:px-8 mb-12 md:mb-16 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-8">
+                    <div>
+                        <a href="#" class="flex items-center gap-2">
+                            <img src="./PitGaussLogo_sinFondo.png" alt="PitGauss Logo" loading="lazy" class="h-16 md:h-20 lg:h-24 w-auto object-contain hover:scale-105 transition-transform duration-300">
+                        </a>
+                        <p class="text-sm leading-relaxed mb-8 max-w-xs text-slate-400">
+                            Revolucionando la preparación preuniversitaria en el Perú con tecnología y excelencia académica.
+                        </p>
+                        <div class="flex gap-4">
+                            <a href="#" aria-label="Facebook" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white hover:bg-primary hover:-translate-y-1 transition-all text-xl"><i class="ph ph-facebook-logo"></i></a>
+                            <a href="#" aria-label="Instagram" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white hover:bg-primary hover:-translate-y-1 transition-all text-xl"><i class="ph ph-instagram-logo"></i></a>
+                            <a href="#" aria-label="TikTok" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white hover:bg-primary hover:-translate-y-1 transition-all text-xl"><i class="ph ph-tiktok-logo"></i></a>
+                            <a href="#" aria-label="YouTube" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white hover:bg-primary hover:-translate-y-1 transition-all text-xl"><i class="ph ph-youtube-logo"></i></a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white text-lg font-bold mb-6">Programas</h4>
+                        <ul>
+                            <li><a href="#" class="hover:text-white transition-colors block mb-3">Ciclo UNI</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors block mb-3">Ciclo San Marcos</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors block mb-3">Ciclo PUCP</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors block mb-3">Ciclo UPC</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors block mb-3">Simulacros</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white text-lg font-bold mb-6">Academia</h4>
+                        <ul>
+                            <li><a href="#" class="hover:text-white transition-colors block mb-3">Nosotros</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors block mb-3">Metodología</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors block mb-3">Resultados</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors block mb-3">Plana Docente</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors block mb-3">Blog</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white text-lg font-bold mb-6">Contacto</h4>
+                        <ul class="flex flex-col">
+                            <li class="flex items-start gap-3 mb-4"><i class="ph ph-map-pin text-accent mt-1 text-lg"></i> Av. Gerardo Unger 6049, Comas, Lima</li>
+                            <li class="flex items-start gap-3 mb-4"><i class="ph ph-phone text-accent mt-1 text-lg"></i> +51 923 624 141</li>
+                            <li class="flex items-start gap-3 mb-4"><i class="ph ph-envelope-simple text-accent mt-1 text-lg"></i> admision@pitgauss.edu.pe</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-t border-slate-800 py-6 text-center text-sm text-slate-500">
+                    <div class="max-w-7xl mx-auto px-4 md:px-8">
+                        <p>© 2026 PitGauss. Todos los derechos reservados. Diseñado para futuros cachimbos.</p>
+                    </div>
+                </div>
+            </footer>
+        </div> </div> <a href="https://wa.me/51923624141" target="_blank" aria-label="Contáctanos por WhatsApp" class="fixed bottom-5 right-5 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-16 sm:h-16 bg-[#25D366] text-white rounded-full flex items-center justify-center text-3xl sm:text-4xl shadow-[0_10px_25px_rgba(37,211,102,0.4)] z-[99] hover:scale-110 hover:-translate-y-2 transition-transform duration-300">
+        <i class="ph-fill ph-whatsapp-logo"></i>
+    </a>
+
+    <div class="modal-overlay fixed inset-0 bg-secondary/80 backdrop-blur-sm z-[1000] flex items-center justify-center p-4 opacity-0 invisible transition-all duration-300" id="modal-matricula">
+        <div class="modal-content bg-white rounded-3xl p-6 sm:p-10 md:p-14 w-full max-w-[500px] relative transform scale-95 transition-all duration-300 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <button aria-label="Cerrar modal" class="modal-close absolute top-6 right-6 w-10 h-10 bg-bg-light text-muted rounded-full flex items-center justify-center text-xl hover:bg-primary hover:text-white transition-colors cursor-pointer">
+                <i class="ph ph-x"></i>
+            </button>
+            <h3 class="text-3xl font-bold mb-2 text-secondary">Inicia tu Camino al <span class="text-primary">Ingreso</span></h3>
+            <p class="text-muted mb-8 leading-relaxed">Déjanos tus datos y un asesor académico se contactará contigo para completar tu matrícula.</p>
+
+            <form id="matricula-form" class="flex flex-col gap-6">
+                <div>
+                    <label class="block text-secondary font-bold mb-2 text-sm" for="nombre">Nombre Completo</label>
+                    <input type="text" id="nombre" class="w-full px-5 py-3 rounded-xl border-2 border-bordercolor text-secondary font-medium outline-none focus:border-primary focus:bg-white bg-white transition-colors" placeholder="Ej. Juan Pérez" required>
+                </div>
+                <div>
+                    <label class="block text-secondary font-bold mb-2 text-sm" for="celular">Celular / WhatsApp</label>
+                    <input type="tel" id="celular" class="w-full px-5 py-3 rounded-xl border-2 border-bordercolor text-secondary font-medium outline-none focus:border-primary focus:bg-white bg-white transition-colors" placeholder="Ej. 987 654 321" required>
+                </div>
+                <div>
+                    <label class="block text-secondary font-bold mb-2 text-sm" for="ciclo">Ciclo de Interés</label>
+                    <select id="ciclo" class="w-full px-5 py-3 rounded-xl border-2 border-bordercolor text-secondary font-medium outline-none focus:border-primary focus:bg-white bg-white transition-colors appearance-none cursor-pointer" style="background-image: url('data:image/svg+xml;utf8,<svg fill=%22%2364748B%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/></svg>'); background-position: right 1rem center; background-repeat: no-repeat;" required>
+                        <option value="">Selecciona un ciclo...</option>
+                        <option value="uni">Ciclo Ciencias (UNI)</option>
+                        <option value="unmsm">Ciclo Letras y Medicina (UNMSM)</option>
+                        <option value="pucp">Ciclo PUCP / UPC</option>
+                        <option value="unac">Ciclo UNAC</option>
+                        <option value="unalm">Ciclo UNALM</option>
+                        <option value="escolares">Apoyo a Escolares</option>
+                    </select>
+                </div>
+                <button type="submit" class="bg-primary text-white px-8 py-4 text-lg font-bold rounded-xl shadow-[0_4px_15px_rgba(13,71,161,0.3)] hover:bg-blue-800 transition-transform hover:-translate-y-1 w-full mt-2">Enviar Solicitud</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Scroll animations using Intersection Observer
+            const revealElements = document.querySelectorAll('.reveal, .fade-in');
+
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealOnScroll = new IntersectionObserver(function (entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, revealOptions);
+
+            revealElements.forEach(el => revealOnScroll.observe(el));
+
+            // 2. Navbar effect on scroll
+            const navbar = document.querySelector('#navbar');
+            if (navbar) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('bg-white/95', 'backdrop-blur-md', 'shadow-sm', 'border-b', 'border-bordercolor', 'py-3');
+                        navbar.classList.remove('bg-transparent', 'py-4');
+                    } else {
+                        navbar.classList.add('bg-transparent', 'py-4');
+                        navbar.classList.remove('bg-white/95', 'backdrop-blur-md', 'shadow-sm', 'border-b', 'border-bordercolor', 'py-3');
+                    }
+                });
+            }
+
+            // Mobile Menu Toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const navMenu = document.getElementById('nav-menu');
+
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    navMenu.classList.toggle('hidden');
+                    navMenu.classList.toggle('flex');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    if (icon.classList.contains('ph-list')) {
+                        icon.classList.remove('ph-list');
+                        icon.classList.add('ph-x');
+                    } else {
+                        icon.classList.remove('ph-x');
+                        icon.classList.add('ph-list');
+                    }
+                });
+
+                const navLinks = navMenu.querySelectorAll('a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        navMenu.classList.add('hidden');
+                        navMenu.classList.remove('flex');
+                        const icon = mobileMenuBtn.querySelector('i');
+                        icon.classList.remove('ph-x');
+                        icon.classList.add('ph-list');
+                    });
+                });
+            }
+
+            // 3. Smooth scrolling for internal links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        e.preventDefault();
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // 4. Trigger initial animations for items in viewport on load
+            setTimeout(() => {
+                document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('active'));
+            }, 100);
+
+            // 5. Modals Management
+            const modalButtons = document.querySelectorAll('[data-target]');
+            const closeButtons = document.querySelectorAll('.modal-close');
+            const modals = document.querySelectorAll('.modal-overlay');
+
+            modalButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = btn.getAttribute('data-target');
+                    const targetModal = document.getElementById(targetId);
+                    if (targetModal) {
+                        targetModal.classList.remove('invisible', 'opacity-0');
+                        targetModal.classList.add('visible', 'opacity-100');
+                        const content = targetModal.querySelector('.modal-content');
+                        if (content) {
+                            content.classList.remove('scale-95');
+                            content.classList.add('scale-100');
+                        }
+                        document.body.style.overflow = 'hidden';
+                    }
+                });
+            });
+
+            const closeModal = (modal) => {
+                modal.classList.add('invisible', 'opacity-0');
+                modal.classList.remove('visible', 'opacity-100');
+                const content = modal.querySelector('.modal-content');
+                if (content) {
+                    content.classList.add('scale-95');
+                    content.classList.remove('scale-100');
+                }
+                document.body.style.overflow = '';
+            };
+
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', () => closeModal(btn.closest('.modal-overlay')));
+            });
+
+            modals.forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModal(modal);
+                });
+            });
+
+            // 6. FAQ Accordion
+            const faqHeaders = document.querySelectorAll('.faq-header');
+            faqHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const faqItem = header.parentElement;
+                    const faqBody = faqItem.querySelector('.faq-body');
+                    const icon = header.querySelector('i');
+                    const isActive = faqItem.classList.contains('active');
+
+                    // Close others
+                    document.querySelectorAll('.faq-item').forEach(item => {
+                        if (item !== faqItem) {
+                            item.classList.remove('active');
+                            item.querySelector('.faq-body').style.height = '0';
+                            item.querySelector('.faq-header i').classList.remove('rotate-180');
+                        }
+                    });
+
+                    // Toggle current
+                    if (isActive) {
+                        faqItem.classList.remove('active');
+                        faqBody.style.height = '0';
+                        icon.classList.remove('rotate-180');
+                    } else {
+                        faqItem.classList.add('active');
+                        faqBody.style.height = faqBody.querySelector('.faq-content').offsetHeight + 'px';
+                        icon.classList.add('rotate-180');
+                    }
+                });
+            });
+
+            // 7. Countdown Timer
+            const countdownDays = document.getElementById('cd-days');
+            const countdownHours = document.getElementById('cd-hours');
+            const countdownMins = document.getElementById('cd-mins');
+            const countdownSecs = document.getElementById('cd-secs');
+
+            if (countdownDays) {
+                const targetDate = new Date();
+                targetDate.setDate(targetDate.getDate() + 14);
+
+                const updateCountdown = () => {
+                    const now = new Date().getTime();
+                    const diff = targetDate.getTime() - now;
+
+                    if (diff > 0) {
+                        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                        countdownDays.innerText = d.toString().padStart(2, '0');
+                        countdownHours.innerText = h.toString().padStart(2, '0');
+                        countdownMins.innerText = m.toString().padStart(2, '0');
+                        countdownSecs.innerText = s.toString().padStart(2, '0');
+                    }
+                };
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
+            }
+
+            // 8. Level Calculator Interaction
+            const calcSteps = document.querySelectorAll('.calc-step');
+            const calcResult = document.getElementById('calc-result');
+            const calcResultMessage = document.getElementById('calc-result-msg');
+            const progressFill = document.getElementById('calc-progress-fill');
+            const stepCountLabel = document.getElementById('step-count');
+
+            let currentStep = 1;
+            const totalSteps = 3;
+            let userAnswers = { area: '', level: '', mode: '' };
+
+            const updateCalcView = () => {
+                const progressPercentage = (currentStep / totalSteps) * 100;
+                if (progressFill) progressFill.style.width = `${progressPercentage}%`;
+                if (stepCountLabel) stepCountLabel.innerText = `Paso ${currentStep} de ${totalSteps}`;
+
+                calcSteps.forEach(step => {
+                    if (parseInt(step.getAttribute('data-step')) === currentStep) {
+                        step.style.display = 'block';
+                        void step.offsetWidth;
+                        step.style.animation = 'none';
+                        void step.offsetWidth;
+                        step.style.animation = 'fadeInStep 0.4s ease forwards';
+                    } else {
+                        step.style.display = 'none';
+                    }
+                });
+            };
+
+            const determineCycle = () => {
+                let reco = "Ciclo Integral (Aptitud Académica Base)";
+                if (userAnswers.area === 'uni') {
+                    reco = userAnswers.level === 'basico' ? "Ciclo Ciencias - Semestral Básico (UNI)" : "Ciclo Ciencias - Intensivo Avanzado (UNI)";
+                } else if (userAnswers.area === 'unmsm') {
+                    reco = "Ciclo Letras y Medicina - Formato DECO® (UNMSM)";
+                } else if (userAnswers.area === 'pucp') {
+                    reco = "Ciclo PUCP / UPC - Entrenamiento Focalizado";
+                }
+                const modeText = userAnswers.mode === 'virtual' ? ' (100% Virtual)' : ' (Presencial Lima)';
+                return `¡Tu perfil encaja perfecto con el ${reco}${modeText}!`;
+            };
+
+            document.querySelectorAll('.calc-step .calc-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const currentStepDiv = option.closest('.calc-step');
+                    const stepNum = parseInt(currentStepDiv.getAttribute('data-step'));
+
+                    currentStepDiv.querySelectorAll('.calc-option').forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+
+                    const val = option.getAttribute('data-val');
+                    if (stepNum === 1) userAnswers.area = val;
+                    if (stepNum === 2) userAnswers.level = val;
+                    if (stepNum === 3) userAnswers.mode = val;
+
+                    setTimeout(() => {
+                        if (currentStep < totalSteps) {
+                            currentStep++;
+                            updateCalcView();
+                        } else {
+                            currentStepDiv.style.display = 'none';
+                            if (document.getElementById('step-count')) {
+                                document.getElementById('step-count').parentElement.style.display = 'none';
+                                document.querySelector('#test-nivel p.text-muted').innerText = "¡Test completado! Revisa tus resultados.";
+                            }
+                            calcResultMessage.innerText = determineCycle();
+                            calcResult.classList.remove('hidden');
+                            calcResult.classList.add('block');
+                            calcResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }, 300);
+                });
+            });
+
+            // 10. Form Handling without Alerts
+            const leadForm = document.querySelector('.lead-form');
+            if (leadForm) {
+                leadForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const btn = leadForm.querySelector('button');
+                    const originalText = btn.innerText;
+                    btn.innerText = '¡Enviado con Éxito!';
+                    btn.style.backgroundColor = '#10B981';
+                    btn.style.borderColor = '#10B981';
+                    setTimeout(() => {
+                        btn.innerText = originalText;
+                        btn.style.backgroundColor = '';
+                        btn.style.borderColor = '';
+                        leadForm.reset();
+                    }, 3000);
+                });
+            }
+
+            const matriculaForm = document.getElementById('matricula-form');
+            if (matriculaForm) {
+                matriculaForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const btn = matriculaForm.querySelector('button');
+                    const originalText = btn.innerText;
+                    btn.innerText = '¡Solicitud Recibida!';
+                    btn.style.backgroundColor = '#10B981';
+                    btn.style.borderColor = '#10B981';
+                    setTimeout(() => {
+                        btn.innerText = originalText;
+                        btn.style.backgroundColor = '';
+                        btn.style.borderColor = '';
+                        matriculaForm.reset();
+                        closeModal(document.getElementById('modal-matricula'));
+                    }, 3000);
+                });
+            }
+
+            // 11. Quote Slider Auto-Play
+            const quoteSlides = document.querySelectorAll('.quote-slide');
+            if (quoteSlides.length > 0) {
+                let currentQuote = 0;
+                setInterval(() => {
+                    quoteSlides.forEach(slide => {
+                        slide.classList.remove('active', 'block');
+                        slide.classList.add('hidden');
+                        slide.style.animation = 'none';
+                    });
+                    currentQuote = (currentQuote + 1) % quoteSlides.length;
+                    const nextSlide = quoteSlides[currentQuote];
+                    nextSlide.classList.add('active', 'block');
+                    nextSlide.classList.remove('hidden');
+                    void nextSlide.offsetWidth;
+                    nextSlide.style.animation = 'fadeInStep 0.5s ease forwards';
+                }, 5000);
+            }
+
+            // 12. Teachers Gallery Scrolling
+            const docGrid = document.getElementById('teachers-grid');
+            const docPrev = document.getElementById('teacher-prev');
+            const docNext = document.getElementById('teacher-next');
+
+            if (docGrid && docPrev && docNext) {
+                const scrollAmount = 320;
+                docNext.addEventListener('click', () => {
+                    docGrid.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                });
+                docPrev.addEventListener('click', () => {
+                    docGrid.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
